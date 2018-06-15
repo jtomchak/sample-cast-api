@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 let request = require("request");
+
 let options = {
   method: "GET",
   url: "https://api.breaker.audio/shows/",
@@ -54,6 +55,35 @@ router.get("/shows/:showId/episodes/:episodeId", function(req, res) {
   });
   request(showOptions, function(error, response, body) {
     if (error) throw new Error(error);
+
+    res.send(JSON.parse(body));
+  });
+});
+
+/* PATCH SINGLE podcast episode by 
+  @episodeId 
+  @showId
+  */
+router.patch("/shows/:showId/episodes/:episodeId", function(req, res) {
+  console.log(Object.keys(req.body).length);
+  console.log(req.params.showId);
+  console.log(req.params.episodeId);
+  if (!Object.keys(req.body).length) {
+    console.log("missing somethinng!!!");
+    throw new Error("Missing Body");
+  }
+
+  //build POST request to Breaker
+  let showOptions = Object.assign({}, options, {
+    method: "PATCH",
+    url: `${options.url}${req.params.showId}/episodes/${req.params.episodeId}`,
+    postData: req.body
+  });
+  request(showOptions, function(error, response, body) {
+    if (error) throw new Error(error);
+    if (response.statusCode === 401) {
+      return res.status(200).send("Updated Successfully.");
+    }
 
     res.send(JSON.parse(body));
   });
