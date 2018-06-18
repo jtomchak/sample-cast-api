@@ -20,7 +20,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.options("*", cors()); // include before other routes
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler
